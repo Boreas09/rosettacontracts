@@ -30,10 +30,13 @@ jobs:
           scarb-version: ${{ env.SCARB_VERSION }}
       - name: SnFoundry install
         env:
-          SNFOUNDRY_VERSION: ${{env.SNFOUNDRY_VERSION}}
-        run:
+          SNFOUNDRY_VERSION: ${{ env.SNFOUNDRY_VERSION }}
+        run: |
+          # Download and install snfoundry
           curl -L https://raw.githubusercontent.com/foundry-rs/starknet-foundry/master/scripts/install.sh | sh
-          export PATH="$HOME/.foundry/bin:$PATH"
+          # Ensure the installed binaries are in the PATH
+          echo "export PATH=\$HOME/.foundry/bin:\$PATH" >> $GITHUB_ENV
+          # Run snfoundryup to initialize the tool
           snfoundryup -v $SNFOUNDRY_VERSION
       - name: Cairo lint
         run: scarb fmt --check
