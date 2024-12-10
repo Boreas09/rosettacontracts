@@ -17,7 +17,9 @@ jobs:
       - name: Starkli install
         run: |
           curl https://get.starkli.sh | sh
-          export PATH="$HOME/.foundry/bin:$PATH"
+          # Source the environment configuration to ensure Starkli tools are in PATH
+          source "$HOME/.config/.starkli/env"
+          # Run starkliup to initialize Starkli
           starkliup
       - name: Extract scarb version
         run: |
