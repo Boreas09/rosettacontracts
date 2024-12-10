@@ -15,7 +15,8 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Starkli install
-        run: curl https://get.starkli.sh | sh
+        run: |
+          curl https://get.starkli.sh | sh
           export PATH="$HOME/.foundry/bin:$PATH"
           starkliup
       - name: Extract scarb version
