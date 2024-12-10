@@ -34,10 +34,12 @@ jobs:
         run: |
           # Download and install snfoundry
           curl -L https://raw.githubusercontent.com/foundry-rs/starknet-foundry/master/scripts/install.sh | sh
-          # Ensure the installed binaries are in the PATH
-          echo "export PATH=\$HOME/.foundry/bin:\$PATH" >> $GITHUB_ENV
-          # Run snfoundryup to initialize the tool
-          snfoundryup -v $SNFOUNDRY_VERSION
+
+          # Manually add /home/runner/.local/bin to the PATH for subsequent commands
+          echo "export PATH=\$HOME/.local/bin:\$PATH" >> $GITHUB_ENV
+
+          # Run snfoundryup with the specified version
+          snfoundryup
       - name: Cairo lint
         run: scarb fmt --check
       - name: Cairo build
