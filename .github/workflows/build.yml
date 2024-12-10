@@ -22,12 +22,10 @@ jobs:
           # Run starkliup to initialize Starkli
           starkliup
       - name: Extract scarb version
+        env:
+          SCARB_VERSION: ${{ env.SCARB_VERSION }}
         run: |
-          SCARB_VERSION=$(grep 'scarb-version = ' Scarb.toml | sed 's/scarb-version = "\(.*\)"/\1/')
-          echo "SCARB_VERSION=$SCARB_VERSION" >> $GITHUB_ENV
-      - uses: software-mansion/setup-scarb@v1
-        with:
-          scarb-version: ${{ env.SCARB_VERSION }}
+          curl --proto '=https' --tlsv1.2 -sSf https://docs.swmansion.com/scarb/install.sh | sh -s -- -v $SCARB_VERSION
       - name: SnFoundry install
         env:
           SNFOUNDRY_VERSION: ${{ env.SNFOUNDRY_VERSION }}
@@ -39,7 +37,7 @@ jobs:
           echo "export PATH=\$HOME/.local/bin:\$PATH" >> $GITHUB_ENV
 
           # Run snfoundryup with the specified version
-          snfoundryup
+          snfoundryup -v $SNFOUNDRY_VERSION
       # - name: Cairo lint
       #   run: scarb fmt --check
       - name: Cairo build
