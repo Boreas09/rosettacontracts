@@ -12,6 +12,11 @@ jobs:
   lint_build_test_and_deploy:
     name: Lint build and test
     runs-on: ubuntu-latest
+    env:
+      SCARB_VERSION: ${{ secrets.SCARB_VERSION }}
+      SNFOUNDRY_VERSION: ${{ secrets.SNFOUNDRY_VERSION }}
+      NETWORK: ${{secrets.STARKNET_NETWORK}}
+      STARKNET_PRIVATE_KEY: ${{secrets.STARKNET_PRIVATE_KEY}}
     steps:
       - uses: actions/checkout@v3
       - name: Starkli install
@@ -21,14 +26,11 @@ jobs:
           source "$HOME/.config/.starkli/env"
           # Run starkliup to initialize Starkli
           starkliup
-      - name: Extract scarb version
-        env:
-          SCARB_VERSION: ${{ env.SCARB_VERSION }}
+      - name: scarb install
         run: |
+          echo "$SCARB_VERSION"
           curl --proto '=https' --tlsv1.2 -sSf https://docs.swmansion.com/scarb/install.sh | sh -s -- -v $SCARB_VERSION
       - name: SnFoundry install
-        env:
-          SNFOUNDRY_VERSION: ${{ env.SNFOUNDRY_VERSION }}
         run: |
           # Download and install snfoundry
           curl -L https://raw.githubusercontent.com/foundry-rs/starknet-foundry/master/scripts/install.sh | sh
@@ -45,7 +47,4 @@ jobs:
       # - name: Cairo test
       #   run: scarb test
       - name: Declare contract
-        env:
-          NETWORK: ${{env.STARKNET_NETWORK}}
-          STARKNET_PRIVATE_KEY: ${{env.STARKNET_PRIVATE_KEY}}
         run: starkli declare --network $NETWORK --private-key $STARKNET_PRIVATE_KEY
