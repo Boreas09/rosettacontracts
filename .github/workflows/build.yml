@@ -3,27 +3,43 @@ name: Lint build and test
 on:
   pull_request:
     branches:
-    - main
+      - main
   push:
     branches:
-    - main
+      - main
 
 jobs:
   lint_build_and_test:
     name: Lint build and test
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-    - name: Extract scarb version
-      run: |
-        SCARB_VERSION=$(grep 'scarb-version = ' Scarb.toml | sed 's/scarb-version = "\(.*\)"/\1/')
-        echo "SCARB_VERSION=$SCARB_VERSION" >> $GITHUB_ENV
-    - uses: software-mansion/setup-scarb@v1
-      with:
-        scarb-version: ${{ env.SCARB_VERSION }}
-    - name: Cairo lint
-      run: scarb fmt --check
-    - name: Cairo build
-      run: scarb build
-    - name: Cairo test
-      run: scarb test
+      - uses: actions/checkout@v3
+      - name: Starkli install
+        run: curl https://get.starkli.sh | sh
+          export PATH="$HOME/.foundry/bin:$PATH"
+          starkliup
+      - name: Extract scarb version
+        run: |
+          SCARB_VERSION=$(grep 'scarb-version = ' Scarb.toml | sed 's/scarb-version = "\(.*\)"/\1/')
+          echo "SCARB_VERSION=$SCARB_VERSION" >> $GITHUB_ENV
+      - uses: software-mansion/setup-scarb@v1
+        with:
+          scarb-version: ${{ env.SCARB_VERSION }}
+      - name: SnFoundry install
+        env:
+          SNFOUNDRY_VERSION: ${{env.SNFOUNDRY_VERSION}}
+        run:
+          curl -L https://raw.githubusercontent.com/foundry-rs/starknet-foundry/master/scripts/install.sh | sh
+          export PATH="$HOME/.foundry/bin:$PATH"
+          snfoundryup -v $SNFOUNDRY_VERSION
+      - name: Cairo lint
+        run: scarb fmt --check
+      - name: Cairo build
+        run: scarb build
+      - name: Cairo test
+        run: scarb test
+      - name: Declare contract
+        env:
+          NETWORK: ${{env.STARKNET_NETWORK}}
+          STARKNET_PRIVATE_KEY: ${{env.STARKNET_PRIVATE_KEY}}
+        run: starkli declare --network $NETWORK --private-key $STARKNET_PRIVATE_KEY
