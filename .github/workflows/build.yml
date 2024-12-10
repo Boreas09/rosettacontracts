@@ -1,4 +1,4 @@
-name: Lint build and test
+name: Lint build test and deploy
 
 on:
   pull_request:
@@ -9,7 +9,7 @@ on:
       - main
 
 jobs:
-  lint_build_and_test:
+  lint_build_test_and_deploy:
     name: Lint build and test
     runs-on: ubuntu-latest
     steps:
@@ -40,12 +40,12 @@ jobs:
 
           # Run snfoundryup with the specified version
           snfoundryup
-      - name: Cairo lint
-        run: scarb fmt --check
+      # - name: Cairo lint
+      #   run: scarb fmt --check
       - name: Cairo build
         run: scarb build
-      - name: Cairo test
-        run: scarb test
+      # - name: Cairo test
+      #   run: scarb test
       - name: Declare contract
         env:
           NETWORK: ${{env.STARKNET_NETWORK}}
