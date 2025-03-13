@@ -27,7 +27,7 @@ pub trait AbiDecodeTrait {
 }
 
 // Tuples can be decoded like basic types in order
-#[derive(Copy, Drop, Serde, Debug, PartialEq)]
+#[derive(Drop, Serde, Debug, PartialEq)]
 pub enum EVMTypes {
     Tuple: Span<EVMTypes>,
     Array: Span<EVMTypes>,
